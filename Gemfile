@@ -5,6 +5,11 @@ gem 'sinatra'
 gem 'shotgun'
 gem 'unicorn'
 gem 'slackbotsy'
+gem "activerecord"
+gem "sinatra-activerecord"
+gem "pg"
+gem "json"
+require 'json'
 
 ## for example scripts
 gem 'nokogiri'
