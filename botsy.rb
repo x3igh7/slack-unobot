@@ -32,7 +32,7 @@ class User < ActiveRecord::Base
 end
 
 class Game < ActiveRecord::Base
-	validates :turn, :status, presence: true
+	validates :creator, :turn, :status, presence: true
 
 	def self.active_game?
 		games = Game.where("status != ?", 3)
@@ -55,6 +55,18 @@ class Game < ActiveRecord::Base
 			return "Game in progress."
 		when 3
 			return "Game is finished."
+		end
+	end
+
+	def save_game(fail_msg, result = null)
+		if self.save
+			if result == null
+				return self
+			else
+				return result
+			end
+		else
+			return fail_msg
 		end
 	end
 
