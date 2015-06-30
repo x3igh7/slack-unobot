@@ -1,6 +1,7 @@
 class CreateGames < ActiveRecord::Migration
   def change
   	create_table :games do |t|
+  		t.string :creator, default: ""
   		t.string :players, default: ""
   		t.string :hands, default: ""
   		t.string :deck, default: ""
