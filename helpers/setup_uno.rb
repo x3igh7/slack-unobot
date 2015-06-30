@@ -49,6 +49,7 @@ module Slackbotsy
     	players = Json.parse(game.players)[0]
     	deck = Json.parse(game.deck)[0]
     	hands = []
+    	discard = ""
 
     	if players.count < 2
     		return "You need at least 2 players to start a game."
@@ -64,6 +65,7 @@ module Slackbotsy
     	game.deck = Json.generate(deck)
     	game.hands = Json.generate(hands)
     	game.status = 2
+    	game.discard = deck.pop
 
     	return game.save_game("Error starting the game >.<", game)
     end
