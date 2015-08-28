@@ -9,8 +9,14 @@ gem "activerecord"
 gem "sinatra-activerecord"
 gem "pg"
 gem "json"
-require 'json'
 
 ## for example scripts
 gem 'nokogiri'
 gem 'wolfram'
+
+group :development, :test do
+	gem "rspec"
+	gem "shoulda-matchers"
+	gem "factory_girl_rails"
+  gem "faker"
+end
