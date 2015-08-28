@@ -22,6 +22,17 @@ module Slackbotsy
   		else
   			return "Error drawing card >.<"
   		end
+
+  		# if you draw a card, you have to play it if possible.
+  		result = determine_play(card, game.discard, hands[turn])
+  		if !result
+  			game.turn = next_turn(game)
+  			if game.save
+  				return "The top card is: #{game.discard}"
+  			else
+  				return "Error progressing game >.<"
+  		end
+
   	end
 
   	def play(card)
@@ -35,37 +46,80 @@ module Slackbotsy
 	  	turn = game.turn
 
 	  	hand = hands[turn]
-	  	if hand.include?(card)
-	  		color = card.slice(0)
-	  		number = card.slice(1..2)
+	  	discard = game.discard
+	  	determine_play(card, discard, hand)
+  	end
 
-	  		if is_same_color
-	  			hand.delete(card)
-	  		elsif is_same_number
-	  			hand.delete(card)
-	  		elsif is_wild
-	  			hand.delete(card)
-	  		elsif is_wild_draw_four
+  	private
 
+  	def determine_play
+  		if hand.include?(card)
+	  		if is_same_color(card, discard)
+	  			play_normal_or_special_card(card, game)
+	  			hand.delete(card)
+	  		elsif discard.length == 1 && !is_same_number(card, discard)
+	  			return false
+	  		elsif is_same_number(card, discard)
+	  			play_normal_or_special_card(card, game)
+	  			hand.delete(card)
+	  		elsif is_wild(card)
+	  			play_wild_card(game)
+	  			hand.delete(card)
+	  		elsif is_wild_draw_four(card)
+	  			play_wild_draw_four(game)
+	  			hand.delete(card)
+	  		else
+	  			return false
+	  		end
 	  	end
+	  end
+
+	  def play_normal_or_special_card(card)
+	  	if(card.slice(1) == "S")
+	  		skip_turn(game)
+	  	elsif (card.slice(1) == "D")
+	  		draw_two(game)
+	  	elsif (card.slice(1) == "R")
+	  		reverse(game)
+	  	else
+	  		normal_play(game)
+	  	end
+	  end
+
+	  def skip_turn(game)
+	  	skipped_player = next_turn(game)
+	  	game.turn = skipped_player
+	  	next_player = next_turn(game)
+	  	game.turn = next_player
+
+	  	game.save
+	  end
+
+  	def is_same_color(card, discard)
+  		card.slice(0) == discard.slice(0)
   	end
 
-  	def is_same_color(color, discard)
-  		color == game.discard.slice(0)
+  	def is_same_number(card, discard)
+  		card.slice(1..2) == discard.slice(1..2)
   	end
 
-  	def is_same_number(number, discard)
-  		number == game.discard.slice(1..2)
+  	def is_wild(card)
+  		card.slice(0) == "W"
   	end
 
-  	def is_wild(number)
-  		number.slice(0) == "W"
+  	def is_wild_draw_four(card)
+  		card.slice(0..1) == "W4"
   	end
 
-  	def is_wild_draw_four
-  		number.slice(0..1) == "W4"
-  	end
+  	def next_turn(game)
+  		turn = game.turn
+  		next_player = turn + 1
+  		if(next_player >= game.hands.length)
+  			next_player = 0
+  		end
 
+  		return next_player
+  	end
 
   end
 
