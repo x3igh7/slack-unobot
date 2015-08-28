@@ -47,17 +47,6 @@ class Game < ActiveRecord::Base
 		return Game.where("status = ?", 2)
 	end
 
-	def pass_turn
-		turn = self.turn
-		if turn == self.players.count - 1
-			turn = 0
-		else
-			turn += 1
-		end
-
-		self.turn = turn
-	end
-
 	def get_status
 		case self.status
 		when 1

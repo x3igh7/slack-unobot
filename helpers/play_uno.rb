@@ -35,18 +35,18 @@ module Slackbotsy
 	  	turn = game.turn
 
 	  	hand = hands[turn]
-
 	  	if hand.include?(card)
 	  		color = card.slice(0)
 	  		number = card.slice(1..2)
 
-	  		if is_same_color || is_same_number || is_wild || is_wild_draw_four
-					hand.delete(card)
-					game.discard = card
-					game.pass_turn
-	  		else
-	  			return "Not a valid play."
-	  		end
+	  		if is_same_color
+	  			hand.delete(card)
+	  		elsif is_same_number
+	  			hand.delete(card)
+	  		elsif is_wild
+	  			hand.delete(card)
+	  		elsif is_wild_draw_four
+
 	  	end
   	end
 
@@ -65,6 +65,7 @@ module Slackbotsy
   	def is_wild_draw_four
   		number.slice(0..1) == "W4"
   	end
+
 
   end
 
